@@ -16,7 +16,7 @@ namespace db {
 
     bool MysqlConnection::load(ErrorInfo& err, const MysqlOpt& opt) {
         char buf[256] = {0};
-        sprintf(buf, "host=%s;user=%s;password=%s;database=%s", opt.host, opt.user, opt.password, opt.database);
+        sprintf(buf, "host=%s;user=%s;password=%s;database=%s", opt.host.data(), opt.user.data(), opt.password.data(), opt.database.data());
         try {
             session_ = new Poco::Data::Session(Poco::Data::MySQL::Connector::KEY, buf);
             return true;

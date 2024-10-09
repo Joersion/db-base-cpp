@@ -10,9 +10,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_PREFIX_PATH "~/work/poco/x86")
 
-find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite DataMySQL)
-
 find_package(MySQL REQUIRED)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite DataMySQL)
 
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
