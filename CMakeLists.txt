@@ -8,14 +8,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_PREFIX_PATH "~/work/poco/x86")
+set(CMAKE_PREFIX_PATH "~/work/poco")
 
-find_package(MySQL REQUIRED)
+set_target_properties(MyExecutable PROPERTIES
+    COMPILE_OPTIONS "-Os; -ffunction-sections; -fdata-sections"
+    LINK_OPTIONS "--gc-sections"
+)
 
-find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite DataMySQL)
+find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite)
 
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_library(db_base ${SOURCES})
 
-target_link_libraries(db_base Poco::Foundation Poco::Data Poco::DataSQLite Poco::DataMySQL MySQL::client)
+target_link_libraries(db_base Poco::Foundation Poco::Data Poco::DataSQLite)
