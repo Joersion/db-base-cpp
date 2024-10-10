@@ -6,7 +6,7 @@ namespace db {
         virtual ~SqliteConnection() = default;
 
     private:
-        virtual Poco::Data::Session* createSession(const Setting& opt) override;
+        virtual Poco::Data::Session* createSession(const Setting& opt, int timetout) override;
     };
 
 };  // namespace db

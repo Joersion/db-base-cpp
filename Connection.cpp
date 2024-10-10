@@ -88,21 +88,23 @@ namespace db {
     }
 
     bool Connection::load(ErrorInfo& err, const Setting& opt) {
+        int timeout = 30;
         if (session_) {
             delete session_;
             session_ = nullptr;
         }
         try {
-            session_ = createSession(opt);
+            if (opt.timeout > 0) {
+                timeout = opt.timeout;
+            }
+            session_ = createSession(opt, timeout);
+            if (!session_) {
+                return false;
+            }
             return true;
-        } catch (const Poco::Data::DataException& e) {
-            err.massage = e.displayText();
-            err.code = e.code();
-        } catch (const Poco::Exception& e) {
-            err.massage = e.displayText();
-            err.code = e.code();
-        } catch (const std::exception& e) {
+        } catch (const std::runtime_error& e) {
             err.massage = e.what();
+            err.code = -1;
         } catch (...) {
             err.massage = "unknow error";
         }

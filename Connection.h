@@ -36,6 +36,7 @@ namespace db {
     };
 
     struct Setting {
+        int timeout;
         std::string host;
         std::string user;
         std::string password;
@@ -80,7 +81,7 @@ namespace db {
                        std::function<void(Poco::Data::Statement& stmt)> op);
 
     private:
-        virtual Poco::Data::Session* createSession(const Setting& opt) = 0;
+        virtual Poco::Data::Session* createSession(const Setting& opt, int timetout) = 0;
 
     protected:
         Poco::Data::Session* session_;
