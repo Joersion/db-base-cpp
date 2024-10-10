@@ -3,17 +3,10 @@ namespace db {
     class SqliteConnection : public Connection {
     public:
         SqliteConnection();
-        virtual ~SqliteConnection();
-
-    public:
-        bool load(ErrorInfo& err, const std::string& dbName);
-
-    protected:
-        virtual bool doExecute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb,
-                               std::function<void(Poco::Data::Statement& stmt)> op) override;
+        virtual ~SqliteConnection() = default;
 
     private:
-        Poco::Data::Session* session_;
+        virtual Poco::Data::Session* createSession(const Setting& opt) override;
     };
 
 };  // namespace db
