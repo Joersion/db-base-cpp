@@ -9,7 +9,7 @@ namespace db {
         return rs_.rowCount();
     }
 
-    Connection::Connection() {
+    Connection::Connection() : session_(nullptr) {
     }
 
     Connection::Connection(ErrorInfo& err, const Setting& opt) : session_(nullptr) {
@@ -66,6 +66,7 @@ namespace db {
             return false;
         }
         session_->begin();
+        return true;
     }
 
     bool Connection::commit(ErrorInfo& err) {
@@ -74,6 +75,7 @@ namespace db {
             return false;
         }
         session_->commit();
+        return true;
     }
 
     bool Connection::rollback(ErrorInfo& err) {
@@ -82,6 +84,7 @@ namespace db {
             return false;
         }
         session_->rollback();
+        return true;
     }
 
     bool Connection::load(ErrorInfo& err, const Setting& opt) {

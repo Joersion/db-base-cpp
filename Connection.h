@@ -48,7 +48,7 @@ namespace db {
     public:
         Connection();
         Connection(ErrorInfo& err, const Setting& opt);
-        virtual ~Connection() = default;
+        virtual ~Connection();
 
     public:
         template <typename... Args>

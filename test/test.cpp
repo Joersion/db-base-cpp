@@ -5,8 +5,10 @@
 
 int main() {
     db::SqliteConnection db;
+    db::Setting opt;
+    opt.dbName = "test.db";
     db::ErrorInfo error;
-    if (!db.load(error, "test.db")) {
+    if (!db.load(error, opt)) {
         std::cout << "load error,code:" << error.code << ",massage:" << error.massage << std::endl;
     }
     if (!db.execute(error, "select id,name,email,age,created_at from users;", [](const db::Result& result) {
