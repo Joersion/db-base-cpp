@@ -35,9 +35,19 @@ namespace db {
         int code;
     };
 
+    struct Setting {
+        std::string host;
+        std::string user;
+        std::string password;
+        std::string database;
+
+        std::string dbName;
+    };
+
     class Connection {
     public:
         Connection();
+        Connection(ErrorInfo& err, const Setting& opt);
         virtual ~Connection() = default;
 
     public:
@@ -47,6 +57,14 @@ namespace db {
         }
 
         bool execute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb = nullptr);
+
+        bool begin(ErrorInfo& err);
+
+        bool commit(ErrorInfo& err);
+
+        bool rollback(ErrorInfo& err);
+
+        bool load(ErrorInfo& err, const Setting& opt);
 
     private:
         template <typename T, typename... Args>
@@ -58,9 +76,14 @@ namespace db {
         void bindParams(Poco::Data::Statement&) {
         }
 
+        bool doExecute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb,
+                       std::function<void(Poco::Data::Statement& stmt)> op);
+
+    private:
+        virtual Poco::Data::Session* createSession(const Setting& opt) = 0;
+
     protected:
-        virtual bool doExecute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb,
-                               std::function<void(Poco::Data::Statement& stmt)> op) = 0;
+        Poco::Data::Session* session_;
     };
 
 };  // namespace db

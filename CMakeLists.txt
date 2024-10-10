@@ -8,12 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_PREFIX_PATH "~/work/poco")
-
-set_target_properties(MyExecutable PROPERTIES
-    COMPILE_OPTIONS "-Os; -ffunction-sections; -fdata-sections"
-    LINK_OPTIONS "--gc-sections"
-)
+set(CMAKE_PREFIX_PATH "~/work/poco/x86")
 
 find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite)
 
