@@ -16,6 +16,6 @@ find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite DataMySQL)
 
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
-add_library(db_base ${SOURCES})
+add_library(db_base SHARED ${SOURCES})
 
 target_link_libraries(db_base Poco::Foundation Poco::Data Poco::DataSQLite Poco::DataMySQL MySQL::client)

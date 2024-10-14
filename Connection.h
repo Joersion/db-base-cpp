@@ -52,11 +52,18 @@ namespace db {
 
     public:
         template <typename... Args>
-        bool execute(ErrorInfo& err, const std::string& sql, Args... args, std::function<void(const Result&)> cb = nullptr) {
+        bool execute(ErrorInfo& err, std::function<void(const Result&)> cb, const std::string& sql, Args... args) {
             return doExecute(err, sql, cb, [&](Poco::Data::Statement& stmt) { bindParams(stmt, args...); });
         }
 
-        bool execute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb = nullptr);
+        template <typename... Args>
+        bool execute(ErrorInfo& err, const std::string& sql, Args... args) {
+            return doExecute(err, sql, nullptr, [&](Poco::Data::Statement& stmt) { bindParams(stmt, args...); });
+        }
+
+        bool execute(ErrorInfo& err, std::function<void(const Result&)> cb, const std::string& sql);
+
+        bool execute(ErrorInfo& err, const std::string& sql);
 
         bool begin(ErrorInfo& err);
 
@@ -69,7 +76,7 @@ namespace db {
     private:
         template <typename T, typename... Args>
         void bindParams(Poco::Data::Statement& stmt, T first, Args... args) {
-            stmt << Poco::Data::Keywords::bind(first);
+            stmt, Poco::Data::Keywords::use(first);
             bindParams(stmt, args...);
         }
 

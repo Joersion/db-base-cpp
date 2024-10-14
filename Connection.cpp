@@ -23,8 +23,12 @@ namespace db {
         }
     }
 
-    bool Connection::execute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb) {
+    bool Connection::execute(ErrorInfo& err, std::function<void(const Result&)> cb, const std::string& sql) {
         return doExecute(err, sql, cb, nullptr);
+    }
+
+    bool Connection::execute(ErrorInfo& err, const std::string& sql) {
+        return doExecute(err, sql, nullptr, nullptr);
     }
 
     bool Connection::doExecute(ErrorInfo& err, const std::string& sql, std::function<void(const Result&)> cb,
