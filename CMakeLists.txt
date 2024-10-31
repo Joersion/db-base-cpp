@@ -10,10 +10,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_PREFIX_PATH "~/work/poco/x86")
 
-find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite)
+find_package(Poco REQUIRED COMPONENTS Foundation Data DataSQLite Redis)
 
 file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_library(db_base SHARED ${SOURCES})
 
-target_link_libraries(db_base Poco::Foundation Poco::Data Poco::DataSQLite)
+target_link_libraries(db_base Poco::Foundation Poco::Data Poco::DataSQLite Poco::Redis)

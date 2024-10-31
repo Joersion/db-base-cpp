@@ -1,13 +1,19 @@
 #include <iostream>
 #include <string>
 
+#include "../RedisCache.h"
 #include "../SqliteConnection.h"
 
 void print(const std::string& info) {
     std::cout << "-------------" << info << "-------------" << std::endl;
 }
 
-int main() {
+void print2(const std::string& info) {
+    std::cout << info << std::endl;
+}
+
+void testSqlite() {
+    print("测试sqlite开始!!!");
     db::SqliteConnection db;
     db::Setting opt;
     opt.dbName = "test.db";
@@ -80,6 +86,73 @@ int main() {
             "select id,name,email,age,created_at from users")) {
         std::cout << "execute error,code:" << error.code << ",massage:" << error.massage << std::endl;
     }
+}
 
+void testRedis() {
+    print("测试redis开始!!!");
+    std::string error;
+    if (!RedisCache::start(error)) {
+        std::cout << "RedisCache start error,msg:" << error << std::endl;
+    }
+
+    // string
+    print("测试string开始...");
+    if (RedisCache::SET("testRedis_string", "good set!")) {
+        print2("SET sucess");
+    }
+    if (RedisCache::APPEND("testRedis_string", "good append!")) {
+        print2("APPEND sucess");
+    }
+    if (RedisCache::GET("testRedis_string") == "good set!good append!") {
+        print2("GET sucess");
+    }
+    if (RedisCache::DEL("testRedis_string") && RedisCache::GET("testRedis_string") == "") {
+        print2("DEL sucess");
+    }
+    // hash
+    print("测试hash开始...");
+    if (RedisCache::HSET("testRedis_hash", "hush1", "my name is one") && RedisCache::HSET("testRedis_hash", "hush2", "my name is two")) {
+        print2("HSET sucess");
+    }
+    if (RedisCache::HGET("testRedis_hash", "hush1") == "my name is one" && RedisCache::HGET("testRedis_hash", "hush2") == "my name is two") {
+        print2("HGET sucess");
+    }
+    std::map<std::string, std::string> table = RedisCache::HGETALL("testRedis_hash");
+    for (auto v : table) {
+        std::cout << v.first << "," << v.second << std::endl;
+    }
+    if (RedisCache::HDEL("testRedis_hash", "hush1") && RedisCache::HDEL("testRedis_hash", "hush2")) {
+        print2("HDEL sucess");
+    }
+    // list
+    print("测试list开始...");
+    if (RedisCache::LPUSH("testRedis_list", "hello1") && RedisCache::LPUSH("testRedis_list", "hello0")) {
+        print2("LPUSH sucess");
+    }
+    if (RedisCache::RPUSH("testRedis_list", "hello2")) {
+        print2("RPUSH sucess");
+    }
+    if (RedisCache::LINDEX("testRedis_list", 0) == "hello0" && RedisCache::LINDEX("testRedis_list", 1) == "hello1" &&
+        RedisCache::LINDEX("testRedis_list", 2) == "hello2") {
+        print2("LINDEX sucess");
+    }
+    if (RedisCache::LPOP("testRedis_list") == "hello0") {
+        print2("LPOP sucess");
+    }
+    if (RedisCache::RPOP("testRedis_list") == "hello2") {
+        print2("RPOP sucess");
+    }
+    if (RedisCache::LLEN("testRedis_list") == 1 && RedisCache::LINDEX("testRedis_list", 0) == "hello1" &&
+        RedisCache::LINDEX("testRedis_list", 1) == "") {
+        print2("LLEN sucess");
+    }
+    if (RedisCache::DEL("testRedis_list")) {
+        print2("DEL sucess");
+    }
+}
+
+int main() {
+    testSqlite();
+    testRedis();
     return 0;
 }
