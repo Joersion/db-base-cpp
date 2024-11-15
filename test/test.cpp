@@ -12,11 +12,12 @@ void print2(const std::string& info) {
     std::cout << info << std::endl;
 }
 
-void testSqlite() {
+void testSqlite(const std::string& name) {
     print("测试sqlite开始!!!");
     db::SqliteConnection db;
     db::Setting opt;
     opt.dbName = "test.db";
+    opt.timeout = 1;
     db::ErrorInfo error;
     if (!db.load(error, opt)) {
         std::cout << "load error,code:" << error.code << ",massage:" << error.massage << std::endl;
@@ -31,6 +32,18 @@ void testSqlite() {
     opt.dbName = "/home/joersion/work/test/test.db";
     if (!db.load(error, opt)) {
         std::cout << "load error,code:" << error.code << ",massage:" << error.massage << std::endl;
+    }
+
+    print("检查表");
+    if (!db.execute(
+            error,
+            [&](const db::Result& result) {
+                if (result.rowCount() > 0) {
+                    std::cout << "检查表成功，users" << std::endl;
+                }
+            },
+            "select name from sqlite_master where type='table' and name=?", name)) {
+        std::cout << "execute error,code:" << error.code << ",massage:" << error.massage << std::endl;
     }
 
     print("数据插入");
@@ -51,8 +64,13 @@ void testSqlite() {
         std::cout << "execute error,code:" << error.code << ",massage:" << error.massage << std::endl;
     }
 
+    print("数据replace");
+    if (!db.execute(error, "replace into users (name,email,age,created_at) values(?,?,?,CURRENT_TIMESTAMP)", "吴佳祥", "123456", "1")) {
+        std::cout << "execute error,code:" << error.code << ",massage:" << error.massage << std::endl;
+    }
+
     print("数据更新");
-    if (!db.execute(error, "update users set name=? where id>?", "joersion", "4")) {
+    if (!db.execute(error, "update users set name=? where id>?", "吴佳祥", "4")) {
         std::cout << "execute error,code:" << error.code << ",massage:" << error.massage << std::endl;
     }
 
@@ -152,7 +170,7 @@ void testRedis() {
 }
 
 int main() {
-    testSqlite();
+    testSqlite("users");
     testRedis();
     return 0;
 }

@@ -77,7 +77,15 @@ namespace db {
     private:
         template <typename T, typename... Args>
         void bindParams(Poco::Data::Statement& stmt, T first, Args... args) {
-            stmt, Poco::Data::Keywords::use(first);
+            if constexpr (std::is_same<T, std::string>::value) {
+                std::string str = first;
+                const char* cstr = str.c_str();
+                stmt, Poco::Data::Keywords::use(cstr);
+            } else if constexpr (std::is_same<T, int>::value || std::is_same<T, const char*>::value || std::is_same<T, long>::value) {
+                stmt, Poco::Data::Keywords::use(first);
+            } else {
+                throw std::invalid_argument("unsupported argument type,please input int/string or char*");
+            }
             bindParams(stmt, args...);
         }
 
