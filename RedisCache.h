@@ -1,6 +1,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 class RedisCache {
 public:
@@ -22,6 +23,7 @@ public:
     static std::string RPOP(const std::string& k);
     static int LLEN(const std::string& k);
     static std::string LINDEX(const std::string& k, int index);
+    static bool KEYS(std::vector<std::string>& result, const std::string& pattern = "*");
 
     static bool start(std::string& err, const std::string& ip = "127.0.0.1", const std::string password = "", int port = 6379);
 };

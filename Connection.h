@@ -86,7 +86,9 @@ namespace db {
                 std::string str = first;
                 const char* cstr = str.c_str();
                 stmt, Poco::Data::Keywords::use(cstr);
-            } else if constexpr (std::is_same<T, int>::value || std::is_same<T, const char*>::value || std::is_same<T, long>::value) {
+            } else if constexpr (std::is_same<T, int>::value || std::is_same<T, long>::value) {
+                stmt, Poco::Data::Keywords::bind(first);
+            } else if (std::is_same<T, const char*>::value) {
                 stmt, Poco::Data::Keywords::use(first);
             } else {
                 throw std::invalid_argument("unsupported argument type");
@@ -106,5 +108,4 @@ namespace db {
     protected:
         Poco::Data::Session* session_;
     };
-
 };  // namespace db
