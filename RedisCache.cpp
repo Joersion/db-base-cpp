@@ -244,6 +244,28 @@ public:
         return "";
     }
 
+    bool keys(std::vector<std::string>& result, const std::string& pattern) {
+        if (!isconnect_) {
+            return false;
+        }
+
+        Array command;
+        command.add("KEYS").add(pattern);
+
+        try {
+            // 执行命令并获取返回的结果
+            Array res = session_.execute<Array>(command);
+            for (int i = 0; i < res.size(); ++i) {
+                result.emplace_back(res.get<BulkString>(i).value());
+            }
+            return true;
+        } catch (RedisException& e) {
+            return false;
+        } catch (...) {
+            return false;
+        }
+    }
+
 private:
     bool isconnect_;
     Client session_;
@@ -304,6 +326,11 @@ std::string RedisCache::RPOP(const std::string& k) {
 int RedisCache::LLEN(const std::string& k) {
     return RedisHandler::instance().llen(k);
 }
+
 std::string RedisCache::LINDEX(const std::string& k, int index) {
     return RedisHandler::instance().lindex(k, index);
+}
+
+bool RedisCache::KEYS(std::vector<std::string>& result, const std::string& pattern) {
+    return RedisHandler::instance().keys(result, pattern);
 }

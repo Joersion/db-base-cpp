@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "../RedisCache.h"
 #include "../SqliteConnection.h"
@@ -47,7 +48,7 @@ void testSqlite(const std::string& name) {
     }
 
     print("数据插入");
-    if (!db.execute(error, "insert into users (name,email,age,created_at) values(?,?,?,CURRENT_TIMESTAMP)", "wjx", "123456", "1")) {
+    if (!db.execute(error, "insert into users (name,email,age,created_at) values(?,?,?,CURRENT_TIMESTAMP)", "wjx", "123456", 100)) {
         std::cout << "execute error,code:" << error.code << ",massage:" << error.massage << std::endl;
     }
 
@@ -57,7 +58,7 @@ void testSqlite(const std::string& name) {
             [](const db::Result& result) {
                 for (int i = 0; i < result.rowCount(); ++i) {
                     std::cout << result.data(i, "id") << "|" << result.data(i, "name") << "|" << result.data(i, "email") << "|"
-                              << result.data(i, "created_at") << std::endl;
+                              << result.data(i, "age") << "|" << result.data(i, "created_at") << std::endl;
                 }
             },
             "select id,name,email,age,created_at from users")) {
@@ -166,6 +167,13 @@ void testRedis() {
     }
     if (RedisCache::DEL("testRedis_list")) {
         print2("DEL sucess");
+    }
+    // 测试keys*
+    print("测试keys*开始...");
+    std::vector<std::string> v;
+    RedisCache::KEYS(v, "*");
+    for (int i = 0; i < v.size(); i++) {
+        print2("KEYS *:" + v[i]);
     }
 }
 
